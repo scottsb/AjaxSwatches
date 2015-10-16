@@ -86,8 +86,7 @@ class Wigman_AjaxSwatches_Block_Swatchlist extends Mage_Core_Block_Template
             /* Create different caches for different categories */
             $this->getPid().'_'.
             /* ... stores */
-            Mage::App()->getStore()->getCode().'_'.
-            '';
+            Mage::App()->getStore()->getCode();
 
         return $cacheKey;
     }

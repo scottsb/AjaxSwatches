@@ -32,8 +32,7 @@ class Wigman_AjaxSwatches_Block_Catalog_Media_Js_List extends Mage_ConfigurableS
             /* Create different caches for different categories */
             $this->getPid().'_'.
             /* ... stores */
-            Mage::App()->getStore()->getCode().'_'.
-            '';
+            Mage::App()->getStore()->getCode();
 
         return $cacheKey;
     }
