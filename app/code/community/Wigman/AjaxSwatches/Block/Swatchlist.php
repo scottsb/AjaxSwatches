@@ -1,64 +1,43 @@
 <?php
 class Wigman_AjaxSwatches_Block_Swatchlist extends Mage_Core_Block_Template
 {
-    public $product, $products;
+    protected $_product;
 
-    protected function _construct() {
+    protected function _construct()
+    {
         parent::_construct();
     }
 
-    protected function _toHtml() {
-
+    protected function _toHtml()
+    {
         $pid = $this->getPid();
 
         $storeId = Mage::App()->getStore()->getId();
 
-        $collection = Mage::getModel('catalog/product')->setStoreId($storeId)->getCollection()
-           ->addAttributeToSelect('*')
-           ->addAttributeToFilter('entity_id', $pid)
-           ->addStoreFilter($storeId)
-           ->load();
+        /* @var $product Mage_Catalog_Model_Product */
+        $product = Mage::getModel('catalog/product')
+            ->setStoreId($storeId)
+            ->load($pid);
 
         /* @var $helper Mage_ConfigurableSwatches_Helper_Mediafallback */
         $helper = Mage::helper('configurableswatches/mediafallback');
 
-        if ($collection
-            instanceof Mage_ConfigurableSwatches_Model_Resource_Catalog_Product_Type_Configurable_Product_Collection) {
-            // avoid recursion
-            return;
-        }
+        $productArrayWrapper = array($pid => $product);
+        $helper->attachChildrenProducts($productArrayWrapper, $storeId);
+        $helper->attachConfigurableProductChildrenAttributeMapping($productArrayWrapper, $storeId);
+        $helper->attachGallerySetToCollection($productArrayWrapper, $storeId);
+        $helper->groupMediaGalleryImages($product);
+        Mage::helper('configurableswatches/productimg')
+            ->indexProductImages($product, $product->getListSwatchAttrValues());
 
-        $products = $collection->getItems();
-
-        $helper->attachChildrenProducts($products, $collection->getStoreId());
-
-        $helper->attachConfigurableProductChildrenAttributeMapping($products, $collection->getStoreId());
-
-        $helper->attachGallerySetToCollection($products, $collection->getStoreId());
-
-        /* @var $product Mage_Catalog_Model_Product */
-        foreach ($products as $product) { //only runs once
-            $helper->groupMediaGalleryImages($product);
-            Mage::helper('configurableswatches/productimg')
-                ->indexProductImages($product, $product->getListSwatchAttrValues());
-
-            $this->product = $product;
-        }
-
-        $this->products = $products;
+        $this->_product = $product;
 
         return parent::_toHtml();
     }
 
-    public function getCollection()
-    {
-
-        return $this->products;
-    }
-
     public function getProduct()
     {
-        return $this->product;
+        return $this->_product;
     }
 
     protected function _isCacheActive()
@@ -103,5 +82,4 @@ class Wigman_AjaxSwatches_Block_Swatchlist extends Mage_Core_Block_Template
 
         return $cacheTags;
     }
-
 }
