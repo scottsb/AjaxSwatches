@@ -50,4 +50,11 @@ class Wigman_AjaxSwatches_Block_Catalog_Media_Js_List extends Mage_ConfigurableS
         return $cacheTags;
     }
 
+    /**
+     * @return array
+     */
+    public function getProducts()
+    {
+        return array(Mage::helper('ajaxswatches')->getProduct($this->getPid()));
+    }
 }

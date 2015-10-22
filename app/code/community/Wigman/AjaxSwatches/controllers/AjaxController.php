@@ -63,7 +63,6 @@ class Wigman_AjaxSwatches_AjaxController extends Mage_Core_Controller_Front_Acti
                 ->createBlock('Wigman_AjaxSwatches/catalog_media_js_list', "mediajslist-$_pid")
                 ->setPid($_pid)
                 ->setViewMode($_viewMode)
-                ->setProductCollection(array($this->getLayout()->getBlock("swatchlist-$_pid")->getProduct()))
                 ->setTemplate('wigman/ajaxswatches/media/js.phtml')
                 ->toHtml();
         }
